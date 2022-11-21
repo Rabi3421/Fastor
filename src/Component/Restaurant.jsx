@@ -13,6 +13,7 @@ import {
   CardFooter,
   Button,
 } from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import offer from "../Image/offer.png";
@@ -20,7 +21,7 @@ import wallet from "../Image/wallet.png";
 
 const Restaurant = () => {
   const [data, setData] = useState([]);
-  const [rating,setRating] = useState([]);
+  //   const [rating,setRating] = useState([]);
   let token = JSON.parse(localStorage.getItem("token"));
   const items = () => {
     axios
@@ -35,20 +36,29 @@ const Restaurant = () => {
         console.log(data.data);
       });
   };
+  const ratingFunction = (e) => {
+    let rating = Object.values(e.rating.all);
+    let people = Object.keys(e.rating.all);
+    let final = 0;
+    for (let i = 0; i < rating.length; i++) {
+      final = final + rating[i] * people[i];
+    }
+    return final;
+  };
   useEffect(() => {
     items();
   }, []);
   return (
     <div>
       <Container>
-        <Flex>
+        <Flex gap="80px">
           <Box>
             <Text>Karan</Text>
             <Text>Let's exploring this evening</Text>
           </Box>
           <Flex>
-            <Image src={offer} alt="offer" />
-            <Image src={wallet} alt="wallet" />
+            <Image height="50px" width="50px" src={offer} alt="offer" />
+            <Image height="80px" width="80px" src={wallet} alt="wallet" />
           </Flex>
         </Flex>
         <Flex>
@@ -66,14 +76,14 @@ const Restaurant = () => {
               <Image
                 objectFit="cover"
                 maxW={{ base: "100%", sm: "200px" }}
-                src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
+                src={e.images[0].url}
                 alt="Caffe Latte"
               />
 
               <Stack>
                 <CardBody>
-                  <Heading size="md">The perfect latte</Heading>
-
+                  <Heading size="md">{e.restaurant_name}</Heading>
+                  <Text>NewDelhi</Text>
                   <Text py="2">
                     Caffè latte is a coffee beverage of Italian origin made with
                     espresso and steamed milk.
@@ -81,16 +91,23 @@ const Restaurant = () => {
                 </CardBody>
 
                 <CardFooter>
-                  <Flex>
+                  <Flex style={{ justifyContent: "space-between" }} gap="80px">
                     <Box>
-                      <Text>{
-                        4.5
-                      }</Text>
+                      <Text>
+                        {
+                          <span>
+                            <StarIcon /> {ratingFunction(e)}
+                          </span>
+                        }
+                      </Text>
                       <Text>Popularity</Text>
                     </Box>
                     <Box>
-                      <Text></Text>
-                      <Text></Text>
+                      <Flex>
+                        <Text>{e.currency.symbol}</Text>
+                        <Text>{e.avg_cost_for_two}</Text>
+                      </Flex>
+                      <Text>cost for two</Text>
                     </Box>
                   </Flex>
                 </CardFooter>
